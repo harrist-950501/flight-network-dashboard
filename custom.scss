@@ -1,0 +1,24 @@
+/*-- scss:defaults --*/
+$bgcolor: lightblue;
+
+.quarto-dashboard {
+  background-color: $bgcolor;
+}
+
+.quarto-dashboard .card.plot > .card-body {
+  padding: 0.1rem;
+}
+
+.code-block[data-full-screen="true"] .card-body {
+  overflow-y: auto;
+  background: var(--bs-tertiary-bg);
+}
+
+.code-block[data-full-screen="true"] .html-fill-container {
+  overflow: visible;
+}
+
+.code-block[data-full-screen="true"] div.sourceCode,
+.code-block[data-full-screen="true"] pre.sourceCode{
+  background: transparent;
+}
