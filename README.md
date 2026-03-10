@@ -8,7 +8,7 @@ The dashboard combines data processing, statistical summaries, and interactive v
 
 ## Dashboard
 
-The project is implemented in **R** using **Quarto**, with interactive visualizations built using **Plotly**, **Leaflet**, and **DT**.  
+The project is implemented in **R** using **Quarto**, with interactive visualizations built using **Ggplot**, **Plotly**, and **DT**.  
 The dashboard presents multiple views of the aviation network, including:
 
 - Distribution of total flights by country  
@@ -40,7 +40,6 @@ These datasets allow the project to examine how global aviation activity is dist
 - Quarto  
 - tidyverse  
 - plotly  
-- leaflet  
 - arrow  
 - DT  
 
@@ -52,6 +51,6 @@ The dashboard included in this repository was rendered with embedded resources, 
 The raw flight schedule data is not included due to its large size.  
 To reproduce the project locally, the flight data must be downloaded separately from:
 
-https://github.com/MrAirspace/aircraft-flight-schedules
+https://github.com/MrAirspace/aircraft-flight-schedules/releases/tag/aircraft_flight_schedules_2025_quarter4
 
 The airport metadata file is included in this repository.
