@@ -1,11 +1,11 @@
 ---
 title: "Global Aviation Network Analysis Dashboard"
 author: "BD6: Harry Cheng, Maggie Zhou"
-format: 
+format:
   dashboard:
     theme: [flatly, custom.scss]
     embed-resources: true
-execute: 
+execute:
   echo: true
 editor: visual
 ---
@@ -127,83 +127,57 @@ international_flights_df <-
 
 # Introduction
 
-::: card
+::: {.card}
 
 # Project Overview
 
-This project aims to reveal the spatial distribution logic of the global aviation network in the post-pandemic era by integrating flight tracking dynamics and global airport infrastructure data from the fourth quarter of 2025. The aviation industry is not only the lifeblood of global trade and tourism but also a crucial indicator of regional economic vitality. According to a report by IATA ([International Air Transport Association](https://www.iata.org/en/pressroom/2026-releases/2026-03-02-02/)), the growth of global air connectivity is exhibiting significant geographical imbalances, which directly impact the efficiency of global supply chains and the resilience of regional economies. By quantifying these patterns, we can identify vulnerable nodes in the global transportation network and provide civil aviation policymakers with insights into hub dependence risks.
+This dashboard examines the global aviation network in the fourth quarter of 2025 using flight schedule records and airport infrastructure data. Drawing on background from the IATA ([International Air Transport Association](https://www.iata.org/en/pressroom/2026-releases/2026-03-02-02/)), it focuses on how air traffic is concentrated across countries, how strongly some national systems depend on major hubs, and how U.S. domestic and international patterns differ.
 
-Figure 1 provides a historical reference point for the structure of the global airline network before the pandemic, helping frame the broader spatial patterns discussed in this project.
+Figure 1 provides historical background on the structure of the global airline network before the pandemic; it is not part of the 2025 dataset analyzed in this dashboard.
 
 ![](../assets/2048px-World-airline-routemap-2009.png){fig-alt="A world airline route map showing major global aviation connections in 2009."}
 
 *Figure 1. Historical world airline route map (2009). Jpatokal, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia Commons.*
 
-## Research questions
+## Big-Picture Questions
 
-**1) Global Flight Concentration:** What will be the concentration of global air traffic at the end of 2025? Which countries occupy core positions on global routes, and what geographical centralization and sparsity characteristics does this distribution reveal about global air connectivity?
+**1) Global Flight Concentration:** How concentrated is global air traffic in late 2025, and which countries occupy the most central positions in international flight activity?
 
-**2) Airport Siphoning by Country:** To what extent do a few major hub airports within a specific country "siphon" traffic from the entire country? By comparison, which countries rely on a single hub (single-core structure), and which exhibit a more balanced multi-hub network?
+**2) Airport Siphoning by Country:** To what extent do a few major airports dominate a country's total flight activity, and which countries show single-hub versus multi-hub structures?
 
-**3) U.S. Domestic vs. International Flights:** What are the differences in the total number and geographical distribution of domestic and international flights in the United States? Which airports are engines of domestic flow, and which are gateways to the world?
+**3) U.S. Domestic vs. International Flights:** How do domestic and international flight patterns differ in the United States, and which places function as its main gateways?
 
-To answer these questions, we utilized two key public datasets:
+## Data Sources
 
-First, the flight schedule dataset provided by [MrAirspace](https://github.com/MrAirspace/aircraft-flight-schedules), which captures takeoff and landing heading movements based on ADS-B signals; Second, the [OurAirports](https://ourairports.com/help/data-dictionary.html) global airport database, used for geolocation and country-level aggregation of flights. This combination of "dynamic flow" and "static points" allows us to move beyond single flight records and construct a complete global aviation geographic picture.
+We use two public datasets: [MrAirspace](https://github.com/MrAirspace/aircraft-flight-schedules) for dynamic flight activity and [OurAirports](https://ourairports.com/help/data-dictionary.html) for geographic airport reference data.
 
-**Ethical Considerations and Limitations:** In the analysis process, we must be aware of the limitations of the data. Given that raw flight data relies heavily on the coverage of ground-based ADS-B receivers, flight records in low-income or remote regions may be underestimated; consequently, the analytical results may be somewhat skewed toward regions with well-developed infrastructure, such as North America and Europe. Furthermore, this study is based exclusively on publicly available commercial data and does not involve privacy-sensitive records of military or VIP government flights, thereby ensuring the research's compliance and non-intrusive nature.
+## Ethical Considerations and Limitations
+
+This analysis uses public, non-sensitive aviation data, but uneven ADS-B coverage may undercount flights in remote or lower-infrastructure regions. The dashboard measures flight activity rather than passenger demand, cargo volume, or route profitability.
 
 ## Data Context
 
 ### Dataset 1: Aircraft Flight Schedules
 
-**Source:** <https://github.com/MrAirspace/aircraft-flight-schedules>
-
-**Access and Publicity:** This dataset is hosted on GitHub and maintained by MrAirspace, making it publicly available scientific research data.
-
-**Creators:** The dataset was compiled and maintained by GitHub contributor MrAirspace. Its core raw signals originate from a globally distributed network of ADS-B (Automatic Dependent Surveillance-Broadcast) receivers.
-
-**Sample Description:** This sample captures global civil aviation flight activity in the fourth quarter of 2025. It records the callsign, airline, and ICAO codes of the scheduled departure and arrival airports for each aircraft. Through cross-validation with databases such as vradarserver, this sample not only includes the physical movement of aircraft but also correlates with commercial operational information. This allows us to track the operational patterns of specific airlines on specific routes.
-
-**Measurement Objects and Methods:** The recorded objects are aircraft entities in operation. The measurement method is through the ADS-B system, where aircraft continuously broadcast their GPS position, altitude, speed, and unique identifier to the ground during flight. These broadcast signals are captured in real time by ground stations and aggregated into structured time-series data.
-
-**Record Size:** In this study, the cleaned original flight schedule for Q4 2025 contains approximately `r flihgt_rows` unique flight records.
-
-**Temporal** **and Geographic Context:** The data covers October to December 2025 (Q4). Theoretically, the geographical scope covers the entire globe, but due to limitations in the density of ground receiving stations, records for North America, Europe, and East Asia are the most detailed.
-
-**Sample Evaluation:**
-
-Advantages: This sample reflects real air traffic flow, rather than just paper schedules, and captures the actual fluctuations caused by temporary delays or route adjustments.
-
-Disadvantages: Due to its reliance on physical receivers, signal coverage has significant blind spots in underdeveloped regions such as the high seas and sub-Saharan Africa, which may lead to severe undersampling bias in the analysis results in these areas.
+- Source: <https://github.com/MrAirspace/aircraft-flight-schedules>
+- Access and publicity: This dataset is hosted on GitHub and maintained by MrAirspace, making it publicly available scientific research data.
+- Creator: The dataset was compiled and maintained by GitHub contributor MrAirspace. Its core raw signals originate from a globally distributed network of ADS-B receivers.
+- Sample description: This dataset captures global civil aviation flight activity in the fourth quarter of 2025. It records the callsign, airline, and ICAO codes of scheduled departure and arrival airports for each aircraft. Because it reflects observed movement rather than only published schedules, it is useful for studying concentration and connectivity in the global network. It therefore provides the dynamic flight activity used throughout this project.
+- Measurement objects and methods: The measured units are aircraft in operation. Flight activity is recorded through ADS-B broadcasts, which are collected by ground receivers and converted into structured flight records.
+- Record size: In this study, the cleaned original flight schedule for Q4 2025 contains approximately `r flihgt_rows` unique flight records.
+- Temporal and geographic context: The data covers October to December 2025 (Q4). Theoretically, the geographical scope covers the entire globe, but due to limitations in the density of ground receiving stations, records for North America, Europe, and East Asia are the most detailed.
+- Sample evaluation: Advantage: This sample reflects real air traffic flow rather than only published schedules, making it well suited for studying actual connectivity patterns. Limitation: Because it depends on physical receiver coverage, some regions such as the high seas and parts of sub-Saharan Africa may be underrepresented.
 
 ### Dataset 2: OurAirports Global Airport Database (airports.csv)
 
-**Source:** <https://ourairports.com/help/data-dictionary.html>
-
-**Access and Publicity:** This dataset can be downloaded free of charge from the OurAirports website and is a completely open and free aviation geographic database.
-
-**Creator:** This project is operated by OurAirports.com, a community-driven organization comprising aviation enthusiasts, pilots, and Geographic Information Systems (GIS) experts from around the globe.
-
-**Sample Description:** This dataset serves as a static "encyclopedia" of global civil aviation infrastructure. It provides detailed listings for each airport, including its ICAO and IATA codes, official name, precise geographic coordinates (latitude and longitude), and administrative classification. Furthermore, it categorizes airports by type (e.g., major international hubs, regional airports, heliports, etc.). This serves as a precise geographic reference framework for our dynamic flight data.
-
-**Measurement Objects and Methods:** The objects recorded are physical airport facilities located worldwide. The data is primarily derived from Aeronautical Information Publications (AIPs) issued by national governments and is manually updated and verified by community members using the latest satellite imagery and aeronautical charts.
-
-**Record Scale:** The database contains detailed records for `r airports_rows` facilities globally, ensuring comprehensive analytical coverage.
-
-**Temporal and Geographic Context:** The data reflects the status of global aviation infrastructure during the 2024–2025 period, covering virtually all known civil landing sites with the exception of a few restricted military zones.
-
-**Sample Evaluation:**
-
-Advantages: Possesses exceptional geographic completeness and classification accuracy, establishing it as the gold standard for conducting Spatial Connectivity Analysis.
-
-Disadvantages: As the data is maintained via crowdsourcing, updates regarding small, non-commercial airstrips may occasionally lag behind. However, for the "large and medium-sized airports" that constitute the primary focus of this project, the accuracy remains exceptionally high.
-
-## Group Information
-
-Harry Cheng (Informatics, University of Washington; harrist\@uw.edu) is interested in web development and data analysis.
-
-Maggie Zhou (The Information School, University of Washington; meiqiz2\@uw.edu)is interested in AI research, exploring the algorithms behind AI and the thought processes behind AI research.
+- Source: <https://ourairports.com/help/data-dictionary.html>
+- Access and publicity: This dataset can be downloaded free of charge from the OurAirports website and is a completely open and free aviation geographic database.
+- Creator: This project is operated by OurAirports.com, a community-driven organization comprising aviation enthusiasts, pilots, and Geographic Information Systems (GIS) experts from around the globe.
+- Sample description: This dataset serves as a static reference for global aviation infrastructure. It includes airport identifiers, official names, geographic coordinates, and airport classifications. In this project, it provides the spatial framework needed to map routes, compare countries, and identify major hubs. It complements the flight schedule data with consistent geographic metadata.
+- Measurement objects and methods: The recorded units are airport facilities around the world. The data is compiled from Aeronautical Information Publications (AIPs) and maintained through community updates and verification.
+- Record size: The database contains detailed records for `r airports_rows` facilities globally, ensuring comprehensive analytical coverage.
+- Temporal and geographic context: The data reflects the status of global aviation infrastructure during the 2024–2025 period, covering virtually all known civil landing sites with the exception of a few restricted military zones.
+- Sample evaluation: Advantage: It offers broad geographic coverage and the airport metadata needed to connect flight movements to countries and regions. Limitation: Because it is partly crowdsourced, updates for smaller or less active facilities may lag behind current conditions.
 :::
 
 # Processing data
@@ -629,7 +603,7 @@ us_top_domes_plot <-
   scale_fill_gradient(low = "#F3E5F5", high = "#4A148C",
                       name = "Domestic flights distribution", labels = label_comma(),
                       na.value = "grey90") +
-  
+
   # Settings
   coord_fixed(1.3) +
   theme_minimal() +
@@ -870,13 +844,26 @@ We used these coordinate functions to control plot orientation and spatial propo
 Source: We learned these through ChatGPT while adjusting maps and plot layouts. They were introduced as useful ggplot2 tools for handling both geographic displays and chart orientation.
 :::
 
-# Conslusion
+# Conclusion + Group Info
 
+::: {.card title="Conclusion"}
 Our analysis shows that global air connectivity in 2025 Q4 is highly concentrated rather than evenly distributed. International flight activity is led primarily by North America and Europe, with East Asia also playing an important but somewhat secondary role. By contrast, many countries in the Global South appear much less connected in this dataset, especially in Africa, where a large number of observations are missing or unavailable. This means the global pattern is not only concentrated, but also regionally uneven, with strong activity clustered in a relatively small number of countries and regions.
 
 Hub dominance also varies substantially across countries, and the two hub-share plots highlight different kinds of systems. The countries that rank highest in top 1 airport share are almost entirely different from those that rank highest in top 3 airport share, showing that single-hub dominance and multi-hub concentration are not the same pattern. In other words, some countries depend heavily on one dominant gateway, while others distribute large shares of traffic across a small group of major airports. Looking at both measures gives a fuller picture of how national air networks are structured.
 
 The U.S. case reinforces this broader pattern. Domestic flight volume is far larger than international flight volume, showing that the U.S. aviation system is driven primarily by internal connectivity. Its international traffic is also concentrated among a small set of partner countries, especially nearby countries such as Canada and Mexico, while domestic activity is unevenly distributed across states. At the same time, our results should be interpreted as estimates of flight activity rather than total transportation importance, since flight counts do not capture passenger volume, seat capacity, route distance, or cargo movement. Because the dataset only covers one quarter, it may also reflect seasonal patterns. Future work could extend this analysis by using full-year data and adding measures such as passenger counts, aircraft capacity, or route distance to better evaluate global and national air connectivity.
+:::
+
+::: {.card title="Group Information"}
+Harry Cheng (Major in Computer Science, minor in Informatics, University of Washington; harrist\@uw.edu) is interested in web development and data analysis.
+
+Maggie Zhou (The Information School, University of Washington; meiqiz2\@uw.edu) is interested in AI research, exploring the algorithms behind AI and the thought processes behind AI research.
+:::
+
+
+
+
+
 
 
 
