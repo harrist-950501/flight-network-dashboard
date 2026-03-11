@@ -13,7 +13,7 @@ connectivity, top-flight countries, and cumulative concentration patterns.
 
 ## Dashboard
 
-The project is implemented in **R** using **Quarto**, with interactive visualizations built using **Ggplot**, **Plotly**, and **DT**.
+The project is implemented in **R** using **Quarto**, with interactive visualizations built using **ggplot2**, **plotly**, and **DT**.
 The dashboard presents multiple views of the aviation network, including:
 
 - Distribution of total flights by country
@@ -45,7 +45,7 @@ These datasets allow the project to examine how global aviation activity is dist
 - Quarto
 - tidyverse
 - plotly
-- ggplot
+- ggplot2
 - DT
 
 
