@@ -1,6 +1,6 @@
 ---
 title: "Global Aviation Network Analysis Dashboard"
-author: "BD6: Harry Cheng, Maggie Zhou"
+author: "Harry Cheng, Maggie Zhou"
 format:
   dashboard:
     theme: [flatly, custom.scss]
