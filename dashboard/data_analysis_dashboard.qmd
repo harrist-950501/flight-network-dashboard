@@ -257,11 +257,32 @@ world_shape <-
 # Join flight totals onto the map polygons and draw the choropleth
 country_shape_flight <-
   world_shape |>
-  left_join(inter_flight_by_country_df, join_by(region == map_country_name))
+  left_join(inter_flight_by_country_df, join_by(region == map_country_name)) |>
+  mutate(
+    # Create hover labels for the interactive world map
+    hover_country = region,
+    hover_total = coalesce(total_flights, 0),
+    hover_departures = coalesce(departure_counts, 0),
+    hover_arrivals = coalesce(arrival_counts, 0),
+    hover_text = paste0(
+      "Country: ", hover_country,
+      "<br>Total international flights: ", comma(hover_total),
+      "<br>Departures: ", comma(hover_departures),
+      "<br>Arrivals: ", comma(hover_arrivals)
+    )
+  )
 
 global_flight_distribution_plot <-
   ggplot(country_shape_flight) +
-  geom_polygon(aes(x = long, y = lat, group = group, fill = total_flights)) +
+  geom_polygon(
+    aes(
+      x = long,
+      y = lat,
+      group = group,
+      fill = total_flights,
+      text = hover_text
+    )
+  ) +
   scale_fill_viridis_c(
     option = "plasma",
     na.value = "grey90",
@@ -292,7 +313,19 @@ top_flight_country_df <-
 
 # Total flights (bar)
 global_total_bar_plot  <-
-  ggplot(top_flight_country_df, aes(x = reorder(map_country_name, -total_flights), y = total_flights)) +
+  ggplot(
+    top_flight_country_df,
+    aes(
+      x = reorder(map_country_name, -total_flights),
+      y = total_flights,
+      # Create hover labels for the interactive country ranking chart
+      text = paste0(
+        "Country: ", map_country_name,
+        "<br>Total flights: ", comma(total_flights),
+        "<br>Share of total: ", percent(share, accuracy = 0.1)
+      )
+    )
+  ) +
   geom_col(fill = "#440154") +
   scale_y_continuous(labels = comma) +
   theme_minimal() +
@@ -305,6 +338,18 @@ global_total_bar_plot  <-
     x = "Country",
     y = "Total Flights"
   )
+
+# Turn the global map into an interactive plot
+global_flight_distribution_interactive <- ggplotly(
+  global_flight_distribution_plot,
+  tooltip = "text"
+)
+
+# Turn the top-country bar chart into an interactive plot
+global_total_bar_interactive <- ggplotly(
+  global_total_bar_plot,
+  tooltip = "text"
+)
 
 # Cumulative share (line)
 global_cum_share_line_plot <-
@@ -470,7 +515,7 @@ inbound_df <- flights_airports_df |>
   summarise(flight_count = n(), .groups = "drop")
 
 # Statistics on the number of flights from US to US
-domestic_df  <- 
+domestic_df  <-
   flights_airports_df |>
   filter(origin_country == "US", dest_country == "US")
 
@@ -487,8 +532,8 @@ intl_summary <- outbound_df |>
   group_by(dest_country) |>
   summarize(out_n = sum(flight_count)) |>
   full_join(
-    inbound_df |> 
-      group_by(origin_country) |> 
+    inbound_df |>
+      group_by(origin_country) |>
       summarize(in_n = sum(flight_count)),
     by = c("dest_country" = "origin_country")
   ) |>
@@ -497,7 +542,7 @@ intl_summary <- outbound_df |>
     in_n = coalesce(in_n, 0),
     total_intl = out_n + in_n
   ) |>
-  rename(country_code = dest_country)|>
+  rename(country_code = dest_country) |>
   mutate(country_name = countrycode(country_code, "iso2c", "country.name"))
 
 # Top 10 selected
@@ -520,10 +565,23 @@ domestic_state_data <- domestic_map_df |>
 # US State map Data
 usa_state_map_data <- states_map |>
   left_join(domestic_state_data, by = c("region" = "state_name"))
-
 # Chart 1: Top 10 International Flights by Total Round Trip Volume
 us_top_inter_plot <-
-  ggplot(intl_top_countries, aes(x = country_name, y = total_intl, fill = total_intl)) +
+  ggplot(
+    intl_top_countries,
+    aes(
+      x = country_name,
+      y = total_intl,
+      fill = total_intl,
+      # Create hover labels for the interactive U.S. international chart
+      text = paste0(
+        "Country: ", as.character(country_name),
+        "<br>Total international flights: ", comma(total_intl),
+        "<br>Outbound from U.S.: ", comma(out_n),
+        "<br>Inbound to U.S.: ", comma(in_n)
+      )
+    )
+  ) +
   geom_col(width = 0.7) +
   scale_fill_gradient(low = "#74add1", high = "#313695", name = "total flights") +
   # Turn the coordinate axes horizontally
@@ -547,14 +605,27 @@ us_top_inter_plot <-
 us_top_domes_plot <-
   ggplot(usa_state_map_data) +
   # Domestic flights within the United States
-  geom_polygon(aes(x = long, y = lat, group = group, fill = dom_flight_n), 
-               color = "white", linewidth = 0.2) +
-  scale_fill_gradient(low = "#F3E5F5", high = "#4A148C", 
+  geom_polygon(
+    aes(
+      x = long,
+      y = lat,
+      group = group,
+      fill = dom_flight_n,
+      # Create hover labels for the interactive U.S. state map
+      text = paste0(
+        "State: ", str_to_title(region),
+        "<br>Domestic flights: ", comma(coalesce(dom_flight_n, 0)),
+        "<br>Measure: departures + arrivals aggregated from airport locations"
+      )
+    ),
+    color = "white", linewidth = 0.2
+  ) +
+  scale_fill_gradient(low = "#F3E5F5", high = "#4A148C",
                       name = "Domestic flights distribution", labels = label_comma(),
                       na.value = "grey90") +
   
   # Settings
-  coord_fixed(1.3) + 
+  coord_fixed(1.3) +
   theme_minimal() +
   labs(
     title = "Domestic Flight Activity by State in the U.S.",
@@ -597,6 +668,12 @@ us_dom_vs_int_plot <-
     plot.title = element_text(face = "bold", size = 14),
     axis.title = element_text(face = "italic")
   )
+
+# Display Interactive Chart
+# Turn the U.S. international bar chart into an interactive plot
+us_top_inter_interactive <- ggplotly(us_top_inter_plot, tooltip = "text")
+# Turn the U.S. domestic state map into an interactive plot
+us_top_domes_interactive <- ggplotly(us_top_domes_plot, tooltip = "text")
 ```
 :::
 
@@ -619,7 +696,7 @@ us_dom_vs_int_plot <-
 ```{r}
 #| fig-alt: "A world choropleth map shading countries by total scheduled flight counts, with darker colors representing more flights."
 #| echo: false
-global_flight_distribution_plot
+global_flight_distribution_interactive
 ```
 :::
 
@@ -631,7 +708,7 @@ global_flight_distribution_plot
 ```{r}
 #| fig-alt: "A bar chart showing the absolute number of international flights for the top countries, highlighting the leaders in global connectivity."
 #| echo: false
-global_total_bar_plot
+global_total_bar_interactive
 ```
 :::
 
@@ -710,7 +787,7 @@ us_dom_vs_int_plot
 ```{r}
 #| echo: false
 #| fig-alt: "A horizontal bar chart listing the top 10 countries by flight volume to and from the U.S.; the chart highlights a heavy concentration of traffic with Canada and Mexico, demonstrating strong regional connectivity within North America."
-us_top_inter_plot
+us_top_inter_interactive
 ```
 :::
 
@@ -718,7 +795,7 @@ us_top_inter_plot
 ```{r}
 #| echo: false
 #| fig-alt: "A choropleth map of the United States showing the density of domestic flight activity by state; the map reveals an uneven geographic distribution, with activity heavily concentrated in large hubs like Texas, Florida, and California."
-us_top_domes_plot
+us_top_domes_interactive
 ```
 :::
 
@@ -794,3 +871,5 @@ Our analysis shows that global air connectivity in 2025 Q4 is highly concentrate
 Hub dominance also varies substantially across countries, and the two hub-share plots highlight different kinds of systems. The countries that rank highest in top 1 airport share are almost entirely different from those that rank highest in top 3 airport share, showing that single-hub dominance and multi-hub concentration are not the same pattern. In other words, some countries depend heavily on one dominant gateway, while others distribute large shares of traffic across a small group of major airports. Looking at both measures gives a fuller picture of how national air networks are structured.
 
 The U.S. case reinforces this broader pattern. Domestic flight volume is far larger than international flight volume, showing that the U.S. aviation system is driven primarily by internal connectivity. Its international traffic is also concentrated among a small set of partner countries, especially nearby countries such as Canada and Mexico, while domestic activity is unevenly distributed across states. At the same time, our results should be interpreted as estimates of flight activity rather than total transportation importance, since flight counts do not capture passenger volume, seat capacity, route distance, or cargo movement. Because the dataset only covers one quarter, it may also reflect seasonal patterns. Future work could extend this analysis by using full-year data and adding measures such as passenger counts, aircraft capacity, or route distance to better evaluate global and national air connectivity.
+
+
