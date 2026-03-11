@@ -5,6 +5,11 @@ The analysis focuses on how air traffic is distributed across countries and airp
 
 The dashboard combines data processing, statistical summaries, and interactive visualization to examine how a small number of airports and countries dominate the global transportation network.
 
+![Dashboard overview](assets/dashborad_overview.png)
+
+Overview of the Global tab, highlighting key takeaways, country-level
+connectivity, top-flight countries, and cumulative concentration patterns.
+
 
 ## Dashboard
 
