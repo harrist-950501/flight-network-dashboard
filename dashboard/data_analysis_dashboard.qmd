@@ -41,8 +41,8 @@ library("tidyverse")
 ```{r}
 # Load flight schedule data and airport data
 
-flight_df <- read_parquet("2025_Q4.parquet")
-airports_df <- read.csv("airports.csv")
+flight_df <- read_parquet("../data/2025_Q4.parquet")
+airports_df <- read.csv("../data/airports.csv")
 
 flihgt_rows <- nrow(flight_df)
 airports_rows <- nrow(airports_df)
@@ -132,6 +132,12 @@ international_flights_df <-
 # Project Overview
 
 This project aims to reveal the spatial distribution logic of the global aviation network in the post-pandemic era by integrating flight tracking dynamics and global airport infrastructure data from the fourth quarter of 2025. The aviation industry is not only the lifeblood of global trade and tourism but also a crucial indicator of regional economic vitality. According to a report by IATA ([International Air Transport Association](https://www.iata.org/en/pressroom/2026-releases/2026-03-02-02/)), the growth of global air connectivity is exhibiting significant geographical imbalances, which directly impact the efficiency of global supply chains and the resilience of regional economies. By quantifying these patterns, we can identify vulnerable nodes in the global transportation network and provide civil aviation policymakers with insights into hub dependence risks.
+
+Figure 1 provides a historical reference point for the structure of the global airline network before the pandemic, helping frame the broader spatial patterns discussed in this project.
+
+![](../assets/2048px-World-airline-routemap-2009.png){fig-alt="A world airline route map showing major global aviation connections in 2009."}
+
+*Figure 1. Historical world airline route map (2009). Jpatokal, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia Commons.*
 
 ## Research questions
 
@@ -871,5 +877,7 @@ Our analysis shows that global air connectivity in 2025 Q4 is highly concentrate
 Hub dominance also varies substantially across countries, and the two hub-share plots highlight different kinds of systems. The countries that rank highest in top 1 airport share are almost entirely different from those that rank highest in top 3 airport share, showing that single-hub dominance and multi-hub concentration are not the same pattern. In other words, some countries depend heavily on one dominant gateway, while others distribute large shares of traffic across a small group of major airports. Looking at both measures gives a fuller picture of how national air networks are structured.
 
 The U.S. case reinforces this broader pattern. Domestic flight volume is far larger than international flight volume, showing that the U.S. aviation system is driven primarily by internal connectivity. Its international traffic is also concentrated among a small set of partner countries, especially nearby countries such as Canada and Mexico, while domestic activity is unevenly distributed across states. At the same time, our results should be interpreted as estimates of flight activity rather than total transportation importance, since flight counts do not capture passenger volume, seat capacity, route distance, or cargo movement. Because the dataset only covers one quarter, it may also reflect seasonal patterns. Future work could extend this analysis by using full-year data and adding measures such as passenger counts, aircraft capacity, or route distance to better evaluate global and national air connectivity.
+
+
 
 
