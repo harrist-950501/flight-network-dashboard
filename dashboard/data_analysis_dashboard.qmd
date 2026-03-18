@@ -805,43 +805,43 @@ Methods: `str_replace()`, `str_replace_all()`, `str_extract()`, `gsub()`
 This section introduces additional tools that were not part of our core class toolkit but appeared in our project. We briefly explain what each one helped us do in our workflow and note where we learned or encountered it.
 
 **arrow + `read_parquet()`**\
-We used `arrow` and `read_parquet()` to load the flight dataset from a Parquet file format. Source: We learned about this through ChatGPT when we identified our first data set but didn't know how to do with `parquet` file (what we usually do in class is csv).
+We used `arrow` and `read_parquet()` to load the flight dataset from a Parquet file format. Source: We learned about this from the official documentation for [`read_parquet()`](https://kou.github.io/arrow-site/docs/r/reference/read_parquet.html) while learning how to import Parquet files in R.
 
 **`rename()`**\
 We used `rename()` to make variable names clearer and more consistent after joining or transforming data. This helped us keep track of similar fields and made later steps in the analysis easier to read.\
-Source: We learned this through ChatGPT while processing the data. It can make sure that the column name before/after join is reflecting the right concept. Example like a flight will have a origin and a destination, but we can't just name them the same with `airport`. We have to give different name, `origin_airport` and `dest_airport`
+Source: We learned about this from the official documentation for [`rename()`](https://dplyr.tidyverse.org/reference/rename.html) while using it to distinguish similarly named fields after joins.
 
 **countrycode + `countrycode()`**\
 We used `countrycode()` to convert ISO country codes into full country names so the data would be easier to interpret and match with map labels. This made the results more readable and more suitable for visualization.\
-Source: We learned this through ChatGPT when we needed a way to translate country codes into more common names. It was especially useful for preparing the data for maps and summaries.
+Source: We learned about this from the official documentation for [`countrycode()`](https://vincentarelbundock.github.io/countrycode/reference/countrycode.html) while preparing country labels for maps and summaries.
 
 **`cumsum()`**\
 We used `cumsum()` to calculate cumulative values across ranked observations. This helped us show how quickly the total share accumulated among the leading categories.\
-Source: I learned this through ChatGPT while building the cumulative distribution for global distribution.
+Source: We learned about this from the official documentation for [`cumsum()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/cumsum.html) while building the cumulative distribution for global flight concentration.
 
 **`scale_x_continuous()` and `scale_y_continuous()`**\
 We used these functions to control how axes were displayed, including labels, limits, and spacing. This made the plots easier to read and helped present the values in a clearer format.\
-Source: We learned this through ChatGPT while adjusting the appearance of our charts. It helped us understand how ggplot2 allows more precise control over axis formatting.
+Source: We learned about this from the official documentation for [`scale_x_continuous()` and `scale_y_continuous()`](https://ggplot2.tidyverse.org/reference/scale_continuous.html) while refining chart axes and labels.
 
 **`count()`**\
 We used `count()` as a quick way to summarize how often grouped observations appeared in the data. This simplified parts of the workflow that would otherwise require a separate `group_by()` and `summarize()`.\
-Source: We learned this through ChatGPT when looking for a shorter way to aggregate repeated observations. It was introduced as a convenient dplyr shortcut for grouped counting.
+Source: We learned about this from the official documentation for [`count()`](https://dplyr.tidyverse.org/reference/count.html) while looking for a shorter grouped-counting workflow.
 
 **`slice_max()`**\
 We used `slice_max()` to select the top observations based on a chosen variable. This made it easier to focus on the highest-volume categories without writing a longer filtering workflow.\
-Source: We learned this through ChatGPT while trying to extract the top-ranked results for one of our plots. It was useful because it directly selects the largest values in a clean way.
+Source: We learned about this from the official documentation for [`slice_max()`](https://dplyr.tidyverse.org/reference/slice.html) while selecting the highest-ranked results for one of our plots.
 
 **`geom_text()`**\
 We used `geom_text()` to place numeric labels directly on the charts. This made the visualizations easier to interpret because viewers could see exact values without estimating from the axis alone.\
-Source: We learned this through ChatGPT when improving the readability of our plots. It was suggested as a way to add direct annotations to bar charts.
+Source: We learned about this from the official documentation for [`geom_text()`](https://ggplot2.tidyverse.org/reference/geom_text.html) while adding direct labels to improve chart readability.
 
 **`reorder()`**\
 We used `reorder()` to sort categorical labels based on numeric values rather than alphabetical order. This made the ranking patterns in the charts much easier to understand visually.\
-Source: We learned this through ChatGPT while fixing the order of categories in ggplot. It helped us understand how to make bar charts follow the logic of the data instead of default label order.
+Source: We learned about this from the official documentation for [`reorder()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/reorder.factor.html) while ordering categories by data values instead of alphabetically.
 
 **`coord_quickmap()`, `coord_fixed()`, and `coord_flip()`**\
 We used these coordinate functions to control plot orientation and spatial proportions. Together, they helped us improve map accuracy, preserve visual balance, and make some bar charts more readable.\
-Source: We learned these through ChatGPT while adjusting maps and plot layouts. They were introduced as useful ggplot2 tools for handling both geographic displays and chart orientation.
+Source: We learned about this from the official documentation for [`coord_quickmap()`](https://ggplot2.tidyverse.org/reference/coord_map.html), [`coord_fixed()`](https://ggplot2.tidyverse.org/reference/coord_fixed.html), and [`coord_flip()`](https://ggplot2.tidyverse.org/reference/coord_flip.html) while adjusting maps and plot layouts.
 :::
 
 # Conclusion + Group Info
